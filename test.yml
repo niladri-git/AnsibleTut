@@ -6,18 +6,12 @@
     - name: Check that the server's alive
       action: ping
 
-    - name: Roll out new code
-      action: git repo=https://github.com/niladri-git/HelloRepo.git dest=/tmp/myapp
+    - name: check nginx
+      service: name=nginx state=started
 
-    - name: Upload index.html for host
-      copy: src=/tmp/myapp/index.html dest=/usr/share/nginx/www/ mode=0644
-      register: copy_file
-      ignore_errors: True
-      notify:
-        - restart nginx
+    - name: check nginx
+      command: service nginx status
+      register: nginx_status
 
-  handlers:
-
-    - name: restart nginx
-      service: name=nginx state=restarted
+    - debug: msg="{{ nginx_status.stdout }}"
 
