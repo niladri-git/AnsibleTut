@@ -11,13 +11,17 @@
 
     - name: Upload index.html for host
       copy: src=/tmp/myapp/index.html dest=/usr/share/nginx/www/ mode=0644
+      copy: src=/tmp/myapp/run.sh dest=/tmp/myapp/ mode=744
       register: copy_file
       ignore_errors: True
       notify:
         - restart nginx
+        - restart app
 
   handlers:
 
     - name: restart nginx
       service: name=nginx state=restarted
 
+    - name: restart app
+      action: command /tmp/myapp/run.sh 
