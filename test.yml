@@ -1,0 +1,23 @@
+---
+- hosts: local
+
+  tasks:
+
+    - name: Check that the server's alive
+      action: ping
+
+    - name: Roll out new code
+      action: git repo=https://github.com/niladri-git/HelloRepo.git dest=/tmp/myapp
+
+    - name: Upload index.html for host
+      copy: src=/tmp/myapp/index.html dest=/usr/share/nginx/www/ mode=0644
+      register: copy_file
+      ignore_errors: True
+      notify:
+        - restart nginx
+
+  handlers:
+
+    - name: restart nginx
+      service: name=nginx state=restarted
+
